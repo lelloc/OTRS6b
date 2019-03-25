@@ -173,7 +173,8 @@ sub Run {
     }
     
 	##########################################################   
-    #remove the indicated queue from the ticket search
+    # remove the indicated queue from the ticket search
+    
     # get queue object
     my $QueueObject = $Kernel::OM->Get('Kernel::System::Queue');
 
@@ -212,7 +213,32 @@ sub Run {
     $Query{ 'DynamicField_' . $Param{JobConfig}->{'DynamicFieldName'} } = {
         Equals => $Self->{Number},
     };
-
+    
+    ##########################################################
+    
+    # add another condition on the date: restrict the ticket search based on parameter value
+	my $OlderThanMinutes = $Param{JobConfig}->{OlderThenDays} * 24 * 60; #convert days into minutes
+	$Self->{CommunicationLogObject}->ObjectLog(
+		ObjectLogType => 'Message',
+        Priority      => 'Debug',
+        Key           => 'Kernel::System::PostMaster::Filter::ExternalTicketNumberRecognition',
+        Value         => "Minutes before (tickets created less than X minutes ago (ticket newer than X minutes)):'$OlderThanMinutes'",
+    );
+	
+	# add filter to query
+	$Query{TicketCreateTimeNewerMinutes} = $OlderThanMinutes;
+    
+    # print query for debug purpose
+    #use Data::Dumper qw(Dumper);
+    #$Self->{CommunicationLogObject}->ObjectLog(
+	#	ObjectLogType => 'Message',
+    #    Priority      => 'Debug',
+    #    Key           => 'Kernel::System::PostMaster::Filter::ExternalTicketNumberRecognition',
+    #    Value         => Dumper \%Query,
+    #);
+	
+	##########################################################
+    
     # get ticket object
     my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
 
