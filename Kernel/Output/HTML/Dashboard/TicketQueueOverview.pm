@@ -126,10 +126,10 @@ sub Run {
             }
         }
         
-        # remove Junk queue (Lello Covino 16-04-2019)
+       # remove Junk queue (Lello Covino 16-04-2019)
         my $ExcludeQueue = $Self->{Config}->{ExcludeQueue};
-        my $QueueID = $QueueObject->QueueLookup( Queue => $ExcludeQueue );
-        delete $Queues{ $QueueID };
+        my $QueueIDExclude = $QueueObject->QueueLookup( Queue => $ExcludeQueue );
+        delete $Queues{ $QueueIDExclude };
 
 
         # add queue to reverse hash
