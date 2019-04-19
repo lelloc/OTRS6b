@@ -97,6 +97,11 @@ sub Run {
         UserID => $Self->{UserID},
         Type   => 'ro',
     );
+    
+     # remove Junk queue otherwise the configured queue (Lello Covino 16-04-2019)
+     my $ExcludeQueue = $Self->{Config}->{ExcludeQueue};
+     my $QueueIDExclude = $QueueObject->QueueLookup( Queue => $ExcludeQueue );
+     delete $Queues{$QueueIDExclude};
 
     # limit them by QueuePermissionGroup if needed
     my $LimitGroupID;
@@ -125,12 +130,6 @@ sub Run {
                 next QUEUES;
             }
         }
-        
-       # remove Junk queue (Lello Covino 16-04-2019)
-        my $ExcludeQueue = $Self->{Config}->{ExcludeQueue};
-        my $QueueIDExclude = $QueueObject->QueueLookup( Queue => $ExcludeQueue );
-        delete $Queues{ $QueueIDExclude };
-
 
         # add queue to reverse hash
         $QueueToID{ $Queues{$QueueID} } = $QueueID;
